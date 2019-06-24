@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+		<title>万里茶道</title>
+		<link rel="stylesheet" href="https://js.arcgis.com/4.11/esri/themes/light/main.css" />
+		</script>
+		<style>
+			html,
+			body,
+			#mDiv {
+				padding: 0;
+				margin: 0;
+				height: 100%;
+				width: 100%;
+			}
+			
+			#layer {
+				bottom: 25px;
+				right: 15px;
+				position: absolute;
+				z-index: 99;
+				background-color: white;
+				border-radius: 8px;
+				padding: 10px;
+				opacity: 0.75;
+			}
+		</style>
+		<script src="https://js.arcgis.com/4.11/"></script>
+		<script>
+			require([
+				"esri/Map",
+				"esri/layers/GeoJSONLayer",
+				"esri/views/SceneView",
+				"esri/widgets/Legend",
+				"esri/widgets/Search"
+			], function(Map, GeoJSONLayer, SceneView, Legend, Search) {
+			
+				var map = new Map({
+					basemap: "oceans",
+				});
+			
+				var view = new SceneView({
+					container: "mDiv",
+					map: map,
+					center: [106.963581,36.927292],
+					zoom: 4.5,
+				});
+			
+				var legend = new Legend({
+					view: view
+				});
+			
+				var searchWidget = new Search({
+					view: view
+				});
+			
+				view.ui.add(legend, "bottom-left");
+				view.ui.add(searchWidget, "top-right");
+			
+				var template2 = {
+					title: "万里茶道沿线城市 · {CITY}",
+					content: [{
+						type: "fields",
+						fieldInfos: [{
+								fieldName: "REGION",
+								label: "Region"
+							},
+							{
+								fieldName: "X",
+								label: "X",
+								format: {
+									digitSeparator: true,
+									places: 4
+								}
+							},
+							{
+								fieldName: "Y",
+								label: "Y",
+								format: {
+									digitSeparator: true,
+									places: 4
+								}
+							},
+							{
+								fieldName: "ABSTRACT",
+								label: "Abstract"
+							}
+						]
+					}]
+				};
+				var template3 = {
+					title: "2014年各类茶叶产量",
+					content: [{
+						type: "fields",
+						fieldInfos: [{
+								fieldName: "y2014",
+								label: "总产量",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "g2014",
+								label: "绿茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "c2014",
+								label: "青茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "r2014",
+								label: "红茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "b2014",
+								label: "黑茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "h2014",
+								label: "黄茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "w2014",
+								label: "白茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "o2014",
+								label: "其他茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							}
+						]
+					}]
+				};
+				var template4 = {
+					title: "2015年各类茶叶产量",
+					content: [{
+						type: "fields",
+						fieldInfos: [{
+								fieldName: "y2015",
+								label: "总产量",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "g2015",
+								label: "绿茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "c2015",
+								label: "青茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "r2015",
+								label: "红茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "b2015",
+								label: "黑茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "h2015",
+								label: "黄茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "w2015",
+								label: "白茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "o2015",
+								label: "其他茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							}
+						]
+					}]
+				};
+				var template5 = {
+					title: "2016年各类茶叶产量",
+					content: [{
+						type: "fields",
+						fieldInfos: [{
+								fieldName: "y2016",
+								label: "总产量",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "g2016",
+								label: "绿茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "c2016",
+								label: "青茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "r2016",
+								label: "红茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "b2016",
+								label: "黑茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "h2016",
+								label: "黄茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "w2016",
+								label: "白茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "o2016",
+								label: "其他茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							}
+						]
+					}]
+				};
+				var template6 = {
+					title: "2017年各类茶叶产量",
+					content: [{
+						type: "fields",
+						fieldInfos: [{
+								fieldName: "y2017",
+								label: "总产量",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "g2017",
+								label: "绿茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "c2017",
+								label: "青茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "r2017",
+								label: "红茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "b2017",
+								label: "黑茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "h2017",
+								label: "黄茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "w2017",
+								label: "白茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							},
+							{
+								fieldName: "o2017",
+								label: "其他茶",
+								format: {
+									digitSeparator: true,
+									places: 0
+								}
+							}
+						]
+					}]
+				};
+			
+				var renderer0 = {
+					type: "simple",
+					symbol: {
+						type: "simple-line",
+						color: [91, 174, 35],
+						width: "2px",
+					},
+				};
+				var renderer1 = {
+					type: "simple",
+					symbol: {
+						type: "simple-line",
+						color: [18, 107, 174],
+						width: "2px"
+					},
+				};
+				var renderer2 = {
+					type: "simple",
+					symbol: {
+						type: "picture-marker",
+						url: "https://sky0081.github.io/Tea/tea.png",
+						width: "25px",
+						height: "25px"
+					},
+				};
+			
+				var sym1 = {
+					type: "simple-fill",
+					color: "#ffd9cc",
+					style: "solid",
+					outline: {
+						width: 1,
+						color: [255, 255, 255, 0.5]
+					}
+				}
+				var sym2 = {
+					type: "simple-fill",
+					color: "#ffc6b3",
+					style: "solid",
+					outline: {
+						width: 1,
+						color: [255, 255, 255, 0.5]
+					}
+				}
+				var sym3 = {
+					type: "simple-fill",
+					color: "#ff9f80",
+					style: "solid",
+					outline: {
+						width: 1,
+						color: [255, 255, 255, 0.5]
+					}
+				}
+				var sym4 = {
+					type: "simple-fill",
+					color: "#ff794d",
+					style: "solid",
+					outline: {
+						width: 1,
+						color: [255, 255, 255, 0.5]
+					}
+				}
+				var renderer3 = {
+					type: "class-breaks",
+					field: "y2014",
+					defaultSymbol: {
+						type: "simple-fill",
+						color: "#ffece5",
+						style: "backward-diagonal",
+						outline: {
+							color: [255, 255, 255, 0.1],
+							width: 1
+						}
+					},
+					defaultLabel: "no data",
+					classBreakInfos: [{
+						minValue: 1,
+						maxValue: 1500,
+						label: "< 1500",
+						symbol: sym1,
+					}, {
+						minValue: 1500,
+						maxValue: 50000,
+						label: "1500 - 50000",
+						symbol: sym2,
+					}, {
+						minValue: 50000,
+						maxValue: 200000,
+						label: "50000 - 200000",
+						symbol: sym3,
+					}, {
+						minValue: 200000,
+						maxValue: 500000,
+						label: "> 200000",
+						symbol: sym4,
+					}, ]
+				};
+				var renderer4 = {
+					type: "class-breaks",
+					field: "y2015",
+					defaultSymbol: {
+						type: "simple-fill",
+						color: "#ffece5",
+						style: "backward-diagonal",
+						outline: {
+							color: [255, 255, 255, 0.1],
+							width: 1
+						}
+					},
+					defaultLabel: "no data",
+					classBreakInfos: [{
+						minValue: 1,
+						maxValue: 1500,
+						label: "< 1500",
+						symbol: sym1,
+					}, {
+						minValue: 1500,
+						maxValue: 50000,
+						label: "1500 - 50000",
+						symbol: sym2,
+					}, {
+						minValue: 50000,
+						maxValue: 200000,
+						label: "50000 - 200000",
+						symbol: sym3,
+					}, {
+						minValue: 200000,
+						maxValue: 500000,
+						label: "> 200000",
+						symbol: sym4,
+					}, ]
+				};
+				var renderer5 = {
+					type: "class-breaks",
+					field: "y2016",
+					defaultSymbol: {
+						type: "simple-fill",
+						color: "#ffece5",
+						style: "backward-diagonal",
+						outline: {
+							color: [255, 255, 255, 0.1],
+							width: 1
+						}
+					},
+					defaultLabel: "no data",
+					classBreakInfos: [{
+						minValue: 1,
+						maxValue: 1500,
+						label: "< 1500",
+						symbol: sym1,
+					}, {
+						minValue: 1500,
+						maxValue: 50000,
+						label: "1500 - 50000",
+						symbol: sym2,
+					}, {
+						minValue: 50000,
+						maxValue: 200000,
+						label: "50000 - 200000",
+						symbol: sym3,
+					}, {
+						minValue: 200000,
+						maxValue: 500000,
+						label: "> 200000",
+						symbol: sym4,
+					}, ]
+				};
+				var renderer6 = {
+					type: "class-breaks",
+					field: "y2017",
+					defaultSymbol: {
+						type: "simple-fill",
+						color: "#ffece5",
+						style: "backward-diagonal",
+						outline: {
+							color: [255, 255, 255, 0.1],
+							width: 1
+						}
+					},
+					defaultLabel: "no data",
+					classBreakInfos: [{
+						minValue: 1,
+						maxValue: 1500,
+						label: "< 1500",
+						symbol: sym1,
+					}, {
+						minValue: 1500,
+						maxValue: 50000,
+						label: "1500 - 50000",
+						symbol: sym2,
+					}, {
+						minValue: 50000,
+						maxValue: 200000,
+						label: "50000 - 200000",
+						symbol: sym3,
+					}, {
+						minValue: 200000,
+						maxValue: 500000,
+						label: "> 200000",
+						symbol: sym4,
+					}, ]
+				};
+			
+				var renderer9 = {
+					type: "simple",
+					symbol: {
+						type: "simple-marker",
+						color: "#61ac85",
+						outline: {
+							color: "seagreen",
+							width: 0.5,
+						},
+					},
+					visualVariables: [
+						{
+							type: "size",
+							field: "AREA",
+							stops:[
+								{
+									value:100,
+									size:10,
+									label:"<100"
+								},
+								{
+									value:150,
+									size:20,
+									label:"150"
+								},
+								{
+									value:200,
+									size:30,
+									label:">200"
+								}
+							]
+						},
+					]
+				};
+			
+				var geojsonLayer9 = new GeoJSONLayer({
+					url: "https://sky0081.github.io/Tea/area.json",
+					title: "茶园面积（2017年）",
+					id: "area",
+					visible: false,
+					renderer: renderer9
+				});
+				var geojsonLayer0 = new GeoJSONLayer({
+					url: "https://sky0081.github.io/Tea/road0.json",
+					title: "万里茶道",
+					id: "road",
+					visible: false,
+					renderer: renderer0
+				});
+				var geojsonLayer1 = new GeoJSONLayer({
+					url: "https://sky0081.github.io/Tea/road1.json",
+					title: "万里茶道（水路）",
+					id: "road",
+					visible: false,
+					renderer: renderer1
+				});
+			
+				var geojsonLayer2 = new GeoJSONLayer({
+					url: "https://sky0081.github.io/Tea/point.json",
+					title: "万里茶道沿线城市",
+					id: "city",
+					visible: false,
+					renderer: renderer2,
+					popupTemplate: template2
+				});
+			
+				var geojsonLayer3 = new GeoJSONLayer({
+					url: "https://sky0081.github.io/Tea/chinawgs84.json",
+					title: "2014年茶叶产量",
+					id: "y2014",
+					visible: false,
+					renderer: renderer3,
+					popupTemplate: template3
+				});
+			
+				var geojsonLayer4 = new GeoJSONLayer({
+					url: "https://sky0081.github.io/Tea/chinawgs84.json",
+					title: "2015年茶叶产量",
+					id: "y2015",
+					visible: false,
+					renderer: renderer4,
+					popupTemplate: template4
+				});
+			
+				var geojsonLayer5 = new GeoJSONLayer({
+					url: "https://sky0081.github.io/Tea/chinawgs84.json",
+					title: "2016年茶叶产量",
+					id: "y2016",
+					visible: false,
+					renderer: renderer5,
+					popupTemplate: template5
+				});
+			
+				var geojsonLayer6 = new GeoJSONLayer({
+					url: "https://sky0081.github.io/Tea/chinawgs84.json",
+					title: "2017年茶叶产量",
+					id: "y2017",
+					visible: false,
+					renderer: renderer6,
+					popupTemplate: template6
+				});
+			
+				function addlayer() {
+					view.map.add(geojsonLayer9);
+					view.map.add(geojsonLayer0);
+					view.map.add(geojsonLayer1);
+					view.map.add(geojsonLayer2);
+					view.map.add(geojsonLayer3);
+					view.map.add(geojsonLayer4);
+					view.map.add(geojsonLayer5);
+					view.map.add(geojsonLayer6);
+				}
+				addlayer();
+			
+				var layer9 = document.getElementById("layer9");
+				layer9.addEventListener("change", function() {
+					if (layer9.checked == true) {
+						geojsonLayer9.visible = true;
+					} else {
+						geojsonLayer9.visible = false;
+					}
+				});
+				var layer1 = document.getElementById("layer1");
+				layer1.addEventListener("change", function() {
+					if (layer1.checked == true) {
+						geojsonLayer0.visible = true;
+						geojsonLayer1.visible = true;
+					} else {
+						geojsonLayer0.visible = false;
+						geojsonLayer1.visible = false;
+					}
+				});
+				var layer2 = document.getElementById("layer2");
+				layer2.addEventListener("change", function() {
+					if (layer2.checked == true) {
+						geojsonLayer2.visible = true;
+					} else {
+						geojsonLayer2.visible = false;
+					}
+				});
+				var layer3 = document.getElementById("layer3");
+				layer3.addEventListener("change", function() {
+					if (layer3.checked == true) {
+						geojsonLayer3.visible = true;
+					} else {
+						geojsonLayer3.visible = false;
+					}
+				});
+				var layer4 = document.getElementById("layer4");
+				layer4.addEventListener("change", function() {
+					if (layer4.checked == true) {
+						geojsonLayer4.visible = true;
+					} else {
+						geojsonLayer4.visible = false;
+					}
+				});
+				var layer5 = document.getElementById("layer5");
+				layer5.addEventListener("change", function() {
+					if (layer5.checked == true) {
+						geojsonLayer5.visible = true;
+					} else {
+						geojsonLayer5.visible = false;
+					}
+				});
+				var layer6 = document.getElementById("layer6");
+				layer6.addEventListener("change", function() {
+					if (layer6.checked == true) {
+						geojsonLayer6.visible = true;
+					} else {
+						geojsonLayer6.visible = false;
+					}
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div id="mDiv"></div>
+		<span id="layer">
+			<input type="checkbox" id="layer9">千亩茶园</br></br>
+			<input type="checkbox" id="layer1"> 万里茶道</br></br>
+			<input type="checkbox" id="layer2"> 茶叶之城</br></br>
+			<input type="checkbox" id="layer3"> 茶叶产量-2014</br></br>
+			<input type="checkbox" id="layer4"> 茶叶产量-2015</br></br>
+			<input type="checkbox" id="layer5"> 茶叶产量-2016</br></br>
+			<input type="checkbox" id="layer6"> 茶叶产量-2017
+		</span>
+	</body>
+</html>
